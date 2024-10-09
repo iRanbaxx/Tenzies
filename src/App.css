@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0b2434] font-karla;
+  }
+}
+
+@layer components {
+  .main-container {
+    @apply flex min-h-screen w-full items-center justify-center p-4;
+  }
+
+  .game-container {
+    @apply flex aspect-square w-full max-w-[500px] flex-col items-center justify-center gap-4 rounded-2xl bg-[#F5F5F5] p-5;
+  }
+
+  .game-title {
+    @apply text-4xl font-bold text-[#2B283A] sm:text-5xl;
+  }
+
+  .game-info {
+    @apply max-w-[80%] text-center text-base text-[#4A4E74] sm:text-lg;
+  }
+
+  .dice-container {
+    @apply grid w-full grid-cols-5 grid-rows-2 gap-3 py-4;
+  }
+
+  .die-component {
+    @apply flex aspect-square cursor-pointer items-center justify-center rounded-lg shadow-die;
+  }
+
+  .die-num {
+    @apply text-2xl font-bold leading-none text-[#2B283A] sm:text-3xl md:text-4xl;
+  }
+
+  .roll-dice-button {
+    @apply mt-4 rounded-md bg-[#5035FF] px-8 py-3 text-lg font-bold text-white shadow-md hover:bg-[#3E2BC5] active:shadow-inner sm:px-10 sm:py-4 sm:text-xl;
+  }
+}
