@@ -25,6 +25,34 @@ const App = () => {
   // State variables
   const [dice, setDice] = useState<Dice[]>(allNewDice()); // Array of dice
   const [tenzies, setTenzies] = useState(false); // Game win state
+  const [timer, setTimer] = useState(0); // Game timer in seconds
+  const [isRunning, setIsRunning] = useState(false); // Timer running state
+  const [timerInterval, setTimerInterval] = useState(0); // Timer interval state
+
+  // Function to start the timer
+  const startTimer = useCallback(() => {
+    if (!isRunning) {
+      setIsRunning(true);
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000);
+      setTimerInterval(interval);
+    }
+  }, [isRunning]);
+
+  // Function to stop the timer
+  const stopTimer = useCallback(() => {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      setTimerInterval(0);
+    }
+  }, [timerInterval]);
+
+  // Function to reset the timer
+  const resetTimer = useCallback(() => {
+    stopTimer();
+    setTimer(0);
+  }, [stopTimer]);
 
   // Function to roll the dice
   const rollDice = useCallback(() => {
@@ -34,25 +62,39 @@ const App = () => {
           ? allNewDice() // If game is won, generate all new dice
           : prevDice.map((die) => (die.isHeld ? die : generateNewDie())) // Otherwise, only roll unheld dice
     );
-    if (tenzies) setTenzies(false);
-  }, [tenzies, allNewDice, generateNewDie]);
+    if (tenzies) {
+      resetTimer();
+      setIsRunning(false);
+      setTenzies(false);
+    }
+  }, [tenzies, allNewDice, generateNewDie, resetTimer]);
 
   // Function to hold or release a die
-  const holdDice = useCallback((id: string) => {
-    setDice((prevDice) =>
-      prevDice.map((die) =>
-        die.id === id ? { ...die, isHeld: !die.isHeld } : die
-      )
-    );
-  }, []);
+  const holdDice = useCallback(
+    (id: string) => {
+      setDice((prevDice) => {
+        const newDice = prevDice.map((die) =>
+          die.id === id ? { ...die, isHeld: !die.isHeld } : die
+        );
+        if (!isRunning && newDice.some((die) => die.isHeld)) {
+          startTimer(); // Start timer when first die is held
+        }
+        return newDice;
+      });
+    },
+    [isRunning, startTimer]
+  );
 
   // Effect to check for win condition
   useEffect(() => {
     const allHeld = dice.every((die) => die.isHeld);
     const firstValue = dice[0].value;
     const allSameValue = dice.every((die) => die.value === firstValue);
-    setTenzies(allHeld && allSameValue);
-  }, [dice]);
+    const winner = allHeld && allSameValue;
+    setTenzies(winner);
+
+    if (winner) stopTimer();
+  }, [dice, stopTimer]);
 
   return (
     <main className="main-container">
@@ -63,6 +105,7 @@ const App = () => {
           Roll until all dice are the same. Click each die to freeze it at its
           current value between rolls.
         </p>
+        <div className="timer">Time: {timer} seconds</div>
         <div className="dice-container">
           {dice.map((die) => (
             <Die key={die.id} {...die} holdDice={() => holdDice(die.id)} />

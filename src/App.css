@@ -40,4 +40,8 @@
   .roll-dice-button {
     @apply mt-4 rounded-md bg-[#5035FF] px-8 py-3 text-lg font-bold text-white shadow-md hover:bg-[#3E2BC5] active:shadow-inner sm:px-10 sm:py-4 sm:text-xl;
   }
+
+  .timer {
+    @apply mb-4 rounded-full bg-[#5035FF] px-4 py-2 text-lg font-semibold text-white shadow-md;
+  }
 }
