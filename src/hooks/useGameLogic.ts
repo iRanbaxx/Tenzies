@@ -22,28 +22,44 @@ export const useGameLogic = () => {
   // State variables
   const [dice, setDice] = useState<Dice[]>(allNewDice()); // Array of dice
   const [tenzies, setTenzies] = useState(false); // Game win state
+  const [rollCount, setRollCount] = useState(0);
+  const [trackingStarted, setTrackingStarted] = useState(false);
 
   // Function to roll the dice
   const rollDice = useCallback(() => {
-    setDice(
-      (prevDice) =>
-        tenzies
-          ? allNewDice() // If game is won, generate all new dice
-          : prevDice.map((die) => (die.isHeld ? die : generateNewDie())) // Otherwise, only roll unheld dice
-    );
+    setDice((prevDice) => {
+      if (tenzies) {
+        setRollCount(0);
+        setTrackingStarted(false);
+        return allNewDice();
+      } else {
+        if (trackingStarted) {
+          setRollCount((prev) => prev + 1);
+        }
+        return prevDice.map((die) => (die.isHeld ? die : generateNewDie()));
+      }
+    });
     if (tenzies) {
       setTenzies(false);
     }
-  }, [tenzies, allNewDice, generateNewDie]);
+  }, [tenzies, allNewDice, generateNewDie, trackingStarted]);
 
   // Function to hold or release a die
-  const holdDice = useCallback((id: string) => {
-    setDice((prevDice) =>
-      prevDice.map((die) =>
-        die.id === id ? { ...die, isHeld: !die.isHeld } : die
-      )
-    );
-  }, []);
+  const holdDice = useCallback(
+    (id: string) => {
+      setDice((prevDice) => {
+        const newDice = prevDice.map((die) =>
+          die.id === id ? { ...die, isHeld: !die.isHeld } : die
+        );
+        if (!trackingStarted && newDice.some((die) => die.isHeld)) {
+          setTrackingStarted(true);
+          setRollCount(1); // Count the initial roll
+        }
+        return newDice;
+      });
+    },
+    [trackingStarted]
+  );
 
   // Effect to check for win condition
   useEffect(() => {
@@ -54,5 +70,5 @@ export const useGameLogic = () => {
     setTenzies(winner);
   }, [dice]);
 
-  return { dice, tenzies, rollDice, holdDice };
+  return { dice, tenzies, rollDice, holdDice, rollCount };
 };

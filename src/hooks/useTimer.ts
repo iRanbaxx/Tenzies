@@ -8,6 +8,10 @@ export const useTimer = () => {
     const savedBestTime = localStorage.getItem('bestTime');
     return savedBestTime ? parseInt(savedBestTime, 10) : Infinity;
   });
+  const [bestRolls, setBestRolls] = useState(() => {
+    const savedBestRolls = localStorage.getItem('bestRolls');
+    return savedBestRolls ? parseInt(savedBestRolls, 10) : Infinity;
+  });
 
   // Function to start the timer
   const startTimer = useCallback(() => {
@@ -27,13 +31,21 @@ export const useTimer = () => {
     setTimer(0);
   }, [stopTimer]);
 
-  // Function to update best time
-  const updateBestTime = useCallback(() => {
-    if (timer < bestTime) {
-      setBestTime(timer);
-      localStorage.setItem('bestTime', timer.toString());
-    }
-  }, [timer, bestTime]);
+  // Function to update best time and rolls
+  const updateBestScore = useCallback(
+    (currentRolls: number) => {
+      if (
+        timer < bestTime ||
+        (timer === bestTime && currentRolls < bestRolls)
+      ) {
+        setBestTime(timer);
+        setBestRolls(currentRolls);
+        localStorage.setItem('bestTime', timer.toString());
+        localStorage.setItem('bestRolls', currentRolls.toString());
+      }
+    },
+    [timer, bestTime, bestRolls]
+  );
 
   // Effect to update timer every second when running
   useEffect(() => {
@@ -50,9 +62,10 @@ export const useTimer = () => {
     timer,
     isRunning,
     bestTime,
+    bestRolls,
     startTimer,
     stopTimer,
     resetTimer,
-    updateBestTime,
+    updateBestScore,
   };
 };

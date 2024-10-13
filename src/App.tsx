@@ -8,15 +8,16 @@ import './App.css';
 
 const App = () => {
   // Custom hooks for game logic and timer
-  const { dice, tenzies, rollDice, holdDice } = useGameLogic();
+  const { dice, tenzies, rollDice, holdDice, rollCount } = useGameLogic();
   const {
     timer,
     isRunning,
     bestTime,
+    bestRolls,
     startTimer,
     stopTimer,
     resetTimer,
-    updateBestTime,
+    updateBestScore,
   } = useTimer();
   const { width, height } = useWindowSize();
 
@@ -37,13 +38,13 @@ const App = () => {
     holdDice(id);
   };
 
-  // Stop timer and update best time when game is won
+  // Stop timer and update best score when game is won
   useEffect(() => {
     if (tenzies) {
       stopTimer();
-      updateBestTime();
+      updateBestScore(rollCount);
     }
-  }, [tenzies, stopTimer, updateBestTime]);
+  }, [tenzies, stopTimer, updateBestScore, rollCount]);
 
   return (
     <main className="main-container">
@@ -63,11 +64,16 @@ const App = () => {
           Roll until all dice are the same. Click each die to freeze it at its
           current value between rolls.
         </p>
-        <div className="time-container">
-          <div className="best-time">
-            Best: {bestTime === Infinity ? '-' : `${bestTime}s`}
+        <div className="stats-container">
+          <div className="best-rolls">
+            Best Rolls: {bestRolls === Infinity ? '-' : bestRolls}
           </div>
-          <div className="timer">Time: {timer}s</div>
+          <div className="best-time">
+            Best Time: {bestTime === Infinity ? '-' : `${bestTime}s`}
+          </div>
+          <div className="stats-separator"></div>
+          <div className="current-rolls">Current Rolls: {rollCount}</div>
+          <div className="current-time">Current Time: {timer}s</div>
         </div>
         <div className="dice-container">
           {dice.map((die) => (
