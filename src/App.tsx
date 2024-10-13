@@ -24,8 +24,6 @@ const App = () => {
   const handleRollClick = () => {
     if (tenzies) {
       resetTimer();
-    } else if (!isRunning) {
-      startTimer();
     }
     rollDice();
   };
