@@ -9,7 +9,15 @@ import './App.css';
 const App = () => {
   // Custom hooks for game logic and timer
   const { dice, tenzies, rollDice, holdDice } = useGameLogic();
-  const { timer, isRunning, startTimer, stopTimer, resetTimer } = useTimer();
+  const {
+    timer,
+    isRunning,
+    bestTime,
+    startTimer,
+    stopTimer,
+    resetTimer,
+    updateBestTime,
+  } = useTimer();
   const { width, height } = useWindowSize();
 
   // Handle roll button click
@@ -31,12 +39,13 @@ const App = () => {
     holdDice(id);
   };
 
-  // Stop timer when game is won
+  // Stop timer and update best time when game is won
   useEffect(() => {
     if (tenzies) {
       stopTimer();
+      updateBestTime();
     }
-  }, [tenzies, stopTimer]);
+  }, [tenzies, stopTimer, updateBestTime]);
 
   return (
     <main className="main-container">
@@ -56,7 +65,12 @@ const App = () => {
           Roll until all dice are the same. Click each die to freeze it at its
           current value between rolls.
         </p>
-        <div className="timer">Time: {timer} seconds</div>
+        <div className="time-container">
+          <div className="best-time">
+            Best: {bestTime === Infinity ? '-' : `${bestTime}s`}
+          </div>
+          <div className="timer">Time: {timer}s</div>
+        </div>
         <div className="dice-container">
           {dice.map((die) => (
             <Die

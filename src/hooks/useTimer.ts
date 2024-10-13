@@ -4,6 +4,10 @@ export const useTimer = () => {
   // State variables
   const [timer, setTimer] = useState(0); // Game timer in seconds
   const [isRunning, setIsRunning] = useState(false); // Timer running state
+  const [bestTime, setBestTime] = useState(() => {
+    const savedBestTime = localStorage.getItem('bestTime');
+    return savedBestTime ? parseInt(savedBestTime, 10) : Infinity;
+  });
 
   // Function to start the timer
   const startTimer = useCallback(() => {
@@ -23,6 +27,14 @@ export const useTimer = () => {
     setTimer(0);
   }, [stopTimer]);
 
+  // Function to update best time
+  const updateBestTime = useCallback(() => {
+    if (timer < bestTime) {
+      setBestTime(timer);
+      localStorage.setItem('bestTime', timer.toString());
+    }
+  }, [timer, bestTime]);
+
   // Effect to update timer every second when running
   useEffect(() => {
     let interval: number;
@@ -34,5 +46,13 @@ export const useTimer = () => {
     return () => clearInterval(interval);
   }, [isRunning]);
 
-  return { timer, isRunning, startTimer, stopTimer, resetTimer };
+  return {
+    timer,
+    isRunning,
+    bestTime,
+    startTimer,
+    stopTimer,
+    resetTimer,
+    updateBestTime,
+  };
 };
