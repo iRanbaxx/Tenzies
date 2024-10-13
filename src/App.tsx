@@ -1,100 +1,39 @@
-import { useCallback, useEffect, useState } from 'react';
-import { nanoid } from 'nanoid';
+import { useEffect } from 'react';
 import ReactConfetti from 'react-confetti';
 import Die from './components/Die.tsx';
-import { Dice } from './types';
+import { useGameLogic } from './hooks/useGameLogic.ts';
+import { useTimer } from './hooks/useTimer.ts';
 import './App.css';
 
 const App = () => {
-  // Function to generate a new die with random value
-  const generateNewDie = useCallback(
-    (): Dice => ({
-      value: Math.ceil(Math.random() * 6),
-      isHeld: false,
-      id: nanoid(),
-    }),
-    []
-  );
+  // Custom hooks for game logic and timer
+  const { dice, tenzies, rollDice, holdDice } = useGameLogic();
+  const { timer, isRunning, startTimer, stopTimer, resetTimer } = useTimer();
 
-  // Function to generate an array of 10 new dice
-  const allNewDice = useCallback(
-    () => Array.from({ length: 10 }, generateNewDie),
-    [generateNewDie]
-  );
-
-  // State variables
-  const [dice, setDice] = useState<Dice[]>(allNewDice()); // Array of dice
-  const [tenzies, setTenzies] = useState(false); // Game win state
-  const [timer, setTimer] = useState(0); // Game timer in seconds
-  const [isRunning, setIsRunning] = useState(false); // Timer running state
-  const [timerInterval, setTimerInterval] = useState(0); // Timer interval state
-
-  // Function to start the timer
-  const startTimer = useCallback(() => {
-    if (!isRunning) {
-      setIsRunning(true);
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 1);
-      }, 1000);
-      setTimerInterval(interval);
-    }
-  }, [isRunning]);
-
-  // Function to stop the timer
-  const stopTimer = useCallback(() => {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      setTimerInterval(0);
-    }
-  }, [timerInterval]);
-
-  // Function to reset the timer
-  const resetTimer = useCallback(() => {
-    stopTimer();
-    setTimer(0);
-  }, [stopTimer]);
-
-  // Function to roll the dice
-  const rollDice = useCallback(() => {
-    setDice(
-      (prevDice) =>
-        tenzies
-          ? allNewDice() // If game is won, generate all new dice
-          : prevDice.map((die) => (die.isHeld ? die : generateNewDie())) // Otherwise, only roll unheld dice
-    );
+  // Handle roll button click
+  const handleRollClick = () => {
     if (tenzies) {
       resetTimer();
-      setIsRunning(false);
-      setTenzies(false);
+    } else if (!isRunning) {
+      startTimer();
     }
-  }, [tenzies, allNewDice, generateNewDie, resetTimer]);
+    rollDice();
+  };
 
-  // Function to hold or release a die
-  const holdDice = useCallback(
-    (id: string) => {
-      setDice((prevDice) => {
-        const newDice = prevDice.map((die) =>
-          die.id === id ? { ...die, isHeld: !die.isHeld } : die
-        );
-        if (!isRunning && newDice.some((die) => die.isHeld)) {
-          startTimer(); // Start timer when first die is held
-        }
-        return newDice;
-      });
-    },
-    [isRunning, startTimer]
-  );
+  // Handle die click for holding
+  const handleHoldDice = (id: string) => {
+    if (!isRunning) {
+      startTimer();
+    }
+    holdDice(id);
+  };
 
-  // Effect to check for win condition
+  // Stop timer when game is won
   useEffect(() => {
-    const allHeld = dice.every((die) => die.isHeld);
-    const firstValue = dice[0].value;
-    const allSameValue = dice.every((die) => die.value === firstValue);
-    const winner = allHeld && allSameValue;
-    setTenzies(winner);
-
-    if (winner) stopTimer();
-  }, [dice, stopTimer]);
+    if (tenzies) {
+      stopTimer();
+    }
+  }, [tenzies, stopTimer]);
 
   return (
     <main className="main-container">
@@ -108,10 +47,14 @@ const App = () => {
         <div className="timer">Time: {timer} seconds</div>
         <div className="dice-container">
           {dice.map((die) => (
-            <Die key={die.id} {...die} holdDice={() => holdDice(die.id)} />
+            <Die
+              key={die.id}
+              {...die}
+              holdDice={() => handleHoldDice(die.id)}
+            />
           ))}
         </div>
-        <button onClick={rollDice} className="roll-dice-button">
+        <button onClick={handleRollClick} className="roll-dice-button">
           {tenzies ? 'Reset' : 'Roll'}
         </button>
       </div>

@@ -1,6 +1,5 @@
 import { DieProps } from '../types';
 
-
 // Die component: Represents a single die in the Tenzies game
 const Die = ({ value, isHeld, holdDice }: DieProps) => (
   <div
