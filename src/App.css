@@ -65,4 +65,81 @@
   .roll-dice-button {
     @apply mt-2 rounded-md bg-[#5035FF] px-4 py-1 text-sm font-bold text-white shadow-md transition-colors duration-200 hover:bg-[#3E2BC5] active:shadow-inner sm:px-6 sm:py-2 sm:text-base;
   }
+
+  .dice-face {
+    @apply relative flex h-full w-full items-center justify-center;
+  }
+
+  .dice-dot {
+    @apply absolute h-[14%] w-[14%] rounded-full bg-[#2B283A];
+  }
+
+  .dice-1 .dice-dot {
+    @apply left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+
+  .dice-2 .dice-dot:nth-child(1) {
+    @apply left-[22%] top-[22%];
+  }
+  .dice-2 .dice-dot:nth-child(2) {
+    @apply bottom-[22%] right-[22%];
+  }
+
+  .dice-3 .dice-dot:nth-child(1) {
+    @apply left-[22%] top-[22%];
+  }
+  .dice-3 .dice-dot:nth-child(2) {
+    @apply left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+  .dice-3 .dice-dot:nth-child(3) {
+    @apply bottom-[22%] right-[22%];
+  }
+
+  .dice-4 .dice-dot:nth-child(1) {
+    @apply left-[22%] top-[22%];
+  }
+  .dice-4 .dice-dot:nth-child(2) {
+    @apply right-[22%] top-[22%];
+  }
+  .dice-4 .dice-dot:nth-child(3) {
+    @apply bottom-[22%] left-[22%];
+  }
+  .dice-4 .dice-dot:nth-child(4) {
+    @apply bottom-[22%] right-[22%];
+  }
+
+  .dice-5 .dice-dot:nth-child(1) {
+    @apply left-[22%] top-[22%];
+  }
+  .dice-5 .dice-dot:nth-child(2) {
+    @apply right-[22%] top-[22%];
+  }
+  .dice-5 .dice-dot:nth-child(3) {
+    @apply left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+  .dice-5 .dice-dot:nth-child(4) {
+    @apply bottom-[22%] left-[22%];
+  }
+  .dice-5 .dice-dot:nth-child(5) {
+    @apply bottom-[22%] right-[22%];
+  }
+
+  .dice-6 .dice-dot:nth-child(1) {
+    @apply left-[22%] top-[22%];
+  }
+  .dice-6 .dice-dot:nth-child(2) {
+    @apply right-[22%] top-[22%];
+  }
+  .dice-6 .dice-dot:nth-child(3) {
+    @apply left-[22%] top-1/2 -translate-y-1/2;
+  }
+  .dice-6 .dice-dot:nth-child(4) {
+    @apply right-[22%] top-1/2 -translate-y-1/2;
+  }
+  .dice-6 .dice-dot:nth-child(5) {
+    @apply bottom-[22%] left-[22%];
+  }
+  .dice-6 .dice-dot:nth-child(6) {
+    @apply bottom-[22%] right-[22%];
+  }
 }

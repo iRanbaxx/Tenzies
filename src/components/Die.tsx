@@ -1,4 +1,5 @@
 import { DieProps } from '../types';
+import DiceFace from './DiceFace';
 
 // Die component: Represents a single die in the Tenzies game
 const Die = ({ value, isHeld, holdDice, tenzies }: DieProps) => (
@@ -8,7 +9,7 @@ const Die = ({ value, isHeld, holdDice, tenzies }: DieProps) => (
       isHeld ? 'held' : 'not-held'
     } ${tenzies ? 'game-won' : ''}`}
   >
-    <span className="die-num">{value}</span>
+    <DiceFace value={value} />
   </div>
 );
 

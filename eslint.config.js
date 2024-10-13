@@ -29,7 +29,7 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      'tailwindcss/no-custom-classname': 'warn',
+      'tailwindcss/no-custom-classname': 'off',
       'tailwindcss/classnames-order': 'warn',
     },
   }

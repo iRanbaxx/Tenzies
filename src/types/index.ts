@@ -10,3 +10,7 @@ export interface DieProps extends Omit<Dice, 'id'> {
   holdDice: () => void;
   tenzies: boolean;
 }
+
+export interface DiceFaceProps {
+  value: number;
+}
