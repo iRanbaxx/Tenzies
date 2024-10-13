@@ -8,4 +8,5 @@ export interface Dice {
 // Interface for the Die component
 export interface DieProps extends Omit<Dice, 'id'> {
   holdDice: () => void;
+  tenzies: boolean;
 }

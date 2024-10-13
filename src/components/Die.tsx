@@ -1,12 +1,13 @@
 import { DieProps } from '../types';
 
 // Die component: Represents a single die in the Tenzies game
-const Die = ({ value, isHeld, holdDice }: DieProps) => (
+const Die = ({ value, isHeld, holdDice, tenzies }: DieProps) => (
   <div
     onClick={holdDice}
-    className={`die-component ${isHeld ? 'bg-[#59E391]' : 'bg-white'}`}
+    className={`die-component ${
+      isHeld ? 'held' : 'not-held'
+    } ${tenzies ? 'game-won' : ''}`}
   >
-    {/* Display the die's value */}
     <span className="die-num">{value}</span>
   </div>
 );
